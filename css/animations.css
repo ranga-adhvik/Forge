@@ -1,0 +1,330 @@
+/* ============================================
+   LIFE OS — Animations & Micro-interactions
+   ============================================ */
+
+/* ---------- Entrance Animations ---------- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ---------- Staggered Card Entrance ---------- */
+.anim-stagger > * {
+  opacity: 0;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.anim-stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.anim-stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.anim-stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.anim-stagger > *:nth-child(5) { animation-delay: 0.33s; }
+.anim-stagger > *:nth-child(6) { animation-delay: 0.40s; }
+.anim-stagger > *:nth-child(7) { animation-delay: 0.47s; }
+
+/* ---------- Glow Pulse ---------- */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+  }
+}
+
+@keyframes glowPulseViolet {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.25);
+  }
+}
+
+/* ---------- Typewriter Effect ---------- */
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--accent-blue);
+  animation: typewriterCursor 0.7s step-end infinite;
+}
+
+.typewriter.done {
+  border-right-color: transparent;
+  white-space: normal;
+}
+
+@keyframes typewriterCursor {
+  0%, 100% { border-right-color: var(--accent-blue); }
+  50% { border-right-color: transparent; }
+}
+
+/* ---------- Floating / Hover Bob ---------- */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.anim-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ---------- Ripple Effect ---------- */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 0.8s;
+}
+
+.ripple:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* ---------- Progress Bar ---------- */
+@keyframes progressGrow {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.anim-progress {
+  animation: progressGrow 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ---------- Gradient Mesh Background ---------- */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-bg);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-mesh__orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.08;
+  animation: orbFloat 20s ease-in-out infinite;
+}
+
+.bg-mesh__orb--1 {
+  width: 600px;
+  height: 600px;
+  background: var(--accent-blue);
+  top: -200px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.bg-mesh__orb--2 {
+  width: 500px;
+  height: 500px;
+  background: var(--accent-violet);
+  bottom: -200px;
+  left: -100px;
+  animation-delay: -7s;
+}
+
+.bg-mesh__orb--3 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-emerald);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -14s;
+  opacity: 0.08;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -40px) scale(1.05); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(40px, 10px) scale(1.02); }
+}
+
+/* ---------- Toast Animations ---------- */
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+}
+
+/* ---------- Particle Canvas ---------- */
+#particles-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-bg);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ---------- Reveal on scroll (JS toggled) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Button Hover Glow ---------- */
+.btn-primary {
+  position: relative;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+  z-index: -1;
+  opacity: 0;
+  filter: blur(12px);
+  transition: opacity var(--transition-base);
+}
+
+.btn-primary:hover::before {
+  opacity: 0.5;
+}
+
+/* ---------- Section Entry Animation ---------- */
+.section-enter {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ---------- Decision card special effects ---------- */
+.decision-card.active {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Gradient border animation */
+@keyframes gradientBorder {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- Small Inline Spinner ---------- */
+.spinner-sm {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* ---------- Stagger fix for output-container ---------- */
+.output-container.anim-stagger > * {
+  opacity: 0;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.output-container.anim-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.output-container.anim-stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.output-container.anim-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.output-container.anim-stagger > *:nth-child(4) { animation-delay: 0.20s; }
+.output-container.anim-stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.output-container.anim-stagger > *:nth-child(6) { animation-delay: 0.30s; }
+.output-container.anim-stagger > *:nth-child(7) { animation-delay: 0.35s; }
+.output-container.anim-stagger > *:nth-child(8) { animation-delay: 0.40s; }
+.output-container.anim-stagger > *:nth-child(9) { animation-delay: 0.45s; }
+.output-container.anim-stagger > *:nth-child(10) { animation-delay: 0.50s; }
+.output-container.anim-stagger > *:nth-child(11) { animation-delay: 0.55s; }
+.output-container.anim-stagger > *:nth-child(12) { animation-delay: 0.60s; }
+.output-container.anim-stagger > *:nth-child(13) { animation-delay: 0.65s; }
+.output-container.anim-stagger > *:nth-child(14) { animation-delay: 0.70s; }

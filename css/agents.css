@@ -1,0 +1,164 @@
+/* ============================================
+   LIFE OS — Agent Card (Light Paper Theme)
+   ============================================ */
+
+.agent-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: var(--space-lg);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.agent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  border-color: var(--border-medium);
+}
+
+/* Card header */
+.agent-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.agent-card__emoji {
+  font-size: 1.25rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+/* Agent-specific tinted backgrounds for the icon */
+.agent-card[data-agent="planner"] .agent-card__emoji { background: rgba(139, 92, 246, 0.08); color: var(--agent-planner); }
+.agent-card[data-agent="productivity"] .agent-card__emoji { background: rgba(245, 158, 11, 0.08); color: var(--agent-productivity); }
+.agent-card[data-agent="health"] .agent-card__emoji { background: rgba(244, 63, 94, 0.08); color: var(--agent-health); }
+.agent-card[data-agent="finance"] .agent-card__emoji { background: rgba(16, 185, 129, 0.08); color: var(--agent-finance); }
+.agent-card[data-agent="learning"] .agent-card__emoji { background: rgba(59, 130, 246, 0.08); color: var(--agent-learning); }
+.agent-card[data-agent="decision"] .agent-card__emoji { background: rgba(6, 182, 212, 0.08); color: var(--agent-decision); }
+.agent-card[data-agent="memory"] .agent-card__emoji { background: rgba(236, 72, 153, 0.08); color: var(--agent-memory); }
+
+.agent-card__title {
+  flex: 1;
+}
+
+.agent-card__name {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: #333333; /* Bold dark gray */
+}
+
+.agent-card__role {
+  font-size: var(--font-size-xs);
+  color: #737373; /* Muted gray */
+  margin-top: 2px;
+}
+
+/* Priority badges - Light pastel variations */
+.agent-card__priority {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.05em;
+}
+
+.agent-card__priority--high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.agent-card__priority--medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.agent-card__priority--low {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Card body sections */
+.agent-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.agent-card__section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Upper case labels */
+.agent-card__section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #a3a3a3; /* Light gray */
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.agent-card__section-text {
+  font-size: var(--font-size-sm);
+  color: #525252; /* Medium gray */
+  line-height: 1.5;
+}
+
+/* Action Box */
+.agent-card__action {
+  padding: var(--space-md);
+  border-radius: 8px;
+  background: #f5f4f0; /* Slightly darker beige */
+  border-left: 4px solid var(--border-medium);
+  font-size: var(--font-size-sm);
+  color: #404040;
+}
+
+/* Action box agent-colored borders */
+.agent-card[data-agent="planner"] .agent-card__action { border-color: var(--agent-planner); }
+.agent-card[data-agent="productivity"] .agent-card__action { border-color: var(--agent-productivity); }
+.agent-card[data-agent="health"] .agent-card__action { border-color: var(--agent-health); }
+.agent-card[data-agent="finance"] .agent-card__action { border-color: var(--agent-finance); }
+.agent-card[data-agent="learning"] .agent-card__action { border-color: var(--agent-learning); }
+.agent-card[data-agent="decision"] .agent-card__action { border-color: var(--agent-decision); }
+.agent-card[data-agent="memory"] .agent-card__action { border-color: var(--agent-memory); }
+
+/* ---------- Thinking State ---------- */
+.agent-card--thinking {
+  opacity: 0.8;
+}
+
+.agent-card__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-sm) 0;
+}
+
+.skeleton-line {
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f5f4f0 25%, #eae8e1 50%, #f5f4f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-line:nth-child(1) { width: 85%; }
+.skeleton-line:nth-child(2) { width: 65%; }
+.skeleton-line:nth-child(3) { width: 75%; }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

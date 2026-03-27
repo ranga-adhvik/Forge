@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Life OS — Your autonomous, context-aware, multi-agent AI system designed to act as your personal intelligence layer.">
+  <title>Life OS — Personal Intelligence Layer</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/index.css?v=2">
+  <link rel="stylesheet" href="css/dashboard.css?v=2">
+  <link rel="stylesheet" href="css/agents.css?v=2">
+  <link rel="stylesheet" href="css/animations.css?v=2">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+
+  <!-- Background Effects -->
+  <div class="bg-mesh">
+    <div class="bg-mesh__orb bg-mesh__orb--1"></div>
+    <div class="bg-mesh__orb bg-mesh__orb--2"></div>
+    <div class="bg-mesh__orb bg-mesh__orb--3"></div>
+  </div>
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- App Shell -->
+  <div class="app">
+
+    <!-- Mobile Sidebar Toggle -->
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__header">
+        <div class="sidebar__logo">
+          <div class="sidebar__logo-icon">🧠</div>
+          <div class="sidebar__logo-text">
+            <h1>Life OS</h1>
+            <span>Intelligence Layer v1.0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar__section">
+        <div class="sidebar__section-title">Agent Roster</div>
+        <div class="agent-roster">
+          <div class="agent-roster__item" data-agent="planner">
+            <span class="agent-roster__emoji">🧩</span>
+            <span class="agent-roster__name">Planner</span>
+            <span class="agent-roster__status"></span>
+          </div>
+          <div class="agent-roster__item" data-agent="productivity">
+            <span class="agent-roster__emoji">⚡</span>
+            <span class="agent-roster__name">Productivity</span>
+            <span class="agent-roster__status"></span>
+          </div>
+          <div class="agent-roster__item" data-agent="health">
+            <span class="agent-roster__emoji">❤️</span>
+            <span class="agent-roster__name">Health</span>
+            <span class="agent-roster__status"></span>
+          </div>
+          <div class="agent-roster__item" data-agent="finance">
+            <span class="agent-roster__emoji">💰</span>
+            <span class="agent-roster__name">Finance</span>
+            <span class="agent-roster__status"></span>
+          </div>
+          <div class="agent-roster__item" data-agent="learning">
+            <span class="agent-roster__emoji">📚</span>
+            <span class="agent-roster__name">Learning</span>
+            <span class="agent-roster__status"></span>
+          </div>
+          <div class="agent-roster__item" data-agent="decision">
+            <span class="agent-roster__emoji">⚖️</span>
+            <span class="agent-roster__name">Decision</span>
+            <span class="agent-roster__status"></span>
+          </div>
+          <div class="agent-roster__item" data-agent="memory">
+            <span class="agent-roster__emoji">🧠</span>
+            <span class="agent-roster__name">Memory</span>
+            <span class="agent-roster__status"></span>
+          </div>
+        </div>
+
+        <div style="margin-top: 32px;">
+          <div class="sidebar__section-title">Quick Examples</div>
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+            <button class="example-prompt">"I feel tired but I have exams"</button>
+            <button class="example-prompt">"Should I buy a paid course?"</button>
+            <button class="example-prompt">"I can't stop procrastinating"</button>
+            <button class="example-prompt">"Plan my week effectively"</button>
+            <button class="example-prompt">"I'm stressed and overwhelmed"</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar__memory">
+        <div class="sidebar__section-title">Memory Bank</div>
+        <div class="memory-stats">
+          <div class="memory-stat">
+            <span>Interactions</span>
+            <span class="memory-stat__value" id="stat-interactions">0</span>
+          </div>
+          <div class="memory-stat">
+            <span>Decisions Made</span>
+            <span class="memory-stat__value" id="stat-decisions">0</span>
+          </div>
+          <div class="memory-stat">
+            <span>Memory Size</span>
+            <span class="memory-stat__value" id="stat-memory-size">0 B</span>
+          </div>
+        </div>
+        <button class="btn btn-ghost" id="clear-memory" style="width: 100%; margin-top: 12px; font-size: 12px; padding: 8px;">
+          🗑️ Clear Memory
+        </button>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main">
+      <!-- Header -->
+      <header class="main__header">
+        <div class="main__greeting">
+          <h2 id="greeting-text">Good Evening</h2>
+          <p id="greeting-subtext">Your personal intelligence layer is ready</p>
+        </div>
+        <div class="main__header-actions">
+          <div class="header-stat">
+            <span class="header-stat__icon">💡</span>
+            <span>Interactions:</span>
+            <span class="header-stat__value" id="header-interactions">0</span>
+          </div>
+          <div class="header-stat">
+            <span class="header-stat__icon">🟢</span>
+            <span>System:</span>
+            <span class="header-stat__value">Online</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Input Section -->
+      <section class="input-section">
+        <div class="input-card glass-strong">
+          <label class="input-card__label" for="user-input">
+            <span class="input-card__label-dot"></span>
+            What's on your mind?
+          </label>
+          <textarea
+            id="user-input"
+            class="input-card__textarea"
+            placeholder="Tell me what's happening in your life — your situation, dilemma, or goal. I'll activate the right agents and give you a complete analysis with tradeoffs..."
+            rows="4"
+            autofocus
+          ></textarea>
+          <div class="input-card__footer">
+            <span class="input-card__hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to submit</span>
+            <button class="btn btn-primary ripple" id="submit-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              Analyze
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Output Section -->
+      <section class="output-section" id="output-section">
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-state__icon anim-float">🧠</div>
+          <h3 class="empty-state__title">Life OS is ready</h3>
+          <p class="empty-state__desc">
+            Describe your situation, dilemma, or goal above. The system will activate
+            relevant agents, analyze tradeoffs, and deliver a decision — not just advice.
+          </p>
+          <div class="example-prompts">
+            <button class="example-prompt">"I feel tired but I have exams"</button>
+            <button class="example-prompt">"Should I buy a coding course or self-study?"</button>
+            <button class="example-prompt">"I'm overwhelmed with too many tasks"</button>
+          </div>
+        </div>
+
+        <!-- Processing State -->
+        <div class="processing" id="processing-state" style="display: none;">
+          <div class="processing__spinner"></div>
+          <div class="processing__text">Initializing agents...</div>
+          <div class="processing__agents"></div>
+        </div>
+
+        <!-- Dynamic Output Container -->
+        <div class="output-container" id="output-container" style="display: none;"></div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- App Script -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
