@@ -11,6 +11,7 @@ import { DecisionAgent } from './agents/decision-agent.js';
 import { MemoryAgent } from './agents/memory-agent.js';
 import { DecisionFlow } from './engine/decision-flow.js';
 import { MemoryStore } from './memory/memory-store.js';
+import { LLMService } from './engine/llm-service.js';
 import { Renderer } from './ui/renderer.js';
 import { Toast } from './ui/toast.js';
 import { ParticleSystem } from './ui/particles.js';
@@ -58,6 +59,25 @@ class LifeOS {
 
     // Update memory stats
     this.updateMemoryStats();
+
+    // Setup API Key UI
+    const apiKeyInput = document.getElementById('api-key-input');
+    const saveApiKeyBtn = document.getElementById('save-api-key');
+    
+    if (apiKeyInput && saveApiKeyBtn) {
+      const currentKey = LLMService.getApiKey();
+      if (currentKey) apiKeyInput.value = currentKey;
+      
+      saveApiKeyBtn.addEventListener('click', () => {
+        const key = apiKeyInput.value.trim();
+        if (key) {
+          LLMService.setApiKey(key);
+          this.toast.show('API Key saved successfully', 'success');
+        } else {
+          this.toast.show('Please enter a valid API Key', 'error');
+        }
+      });
+    }
 
     // Bind events
     this.submitBtn.addEventListener('click', () => this.handleSubmit());

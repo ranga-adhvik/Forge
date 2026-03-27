@@ -34,30 +34,35 @@ export class DecisionFlow {
     const activatedAgents = this.agentRouter.route(parsedIntent, input);
     await this.delay(300);
 
-    // Step 3: Collect agent opinions (simulated parallel)
+    // Step 3: Collect agent opinions (real parallel LLM calls)
     onStep('analyzing', 'Agents analyzing...');
-    const agentResults = [];
+    
+    const analysisPromises = activatedAgents
+      .filter(agent => agent.key !== 'decision' && agent.key !== 'memory')
+      .map(async agent => {
+        onStep('agent-thinking', agent.key);
+        const result = await agent.analyze(input, context);
+        return { agent, result };
+      });
 
-    for (const agent of activatedAgents) {
-      if (agent.key === 'decision') continue; // Decision agent runs last
-
-      onStep('agent-thinking', agent.key);
-      await this.delay(200 + Math.random() * 300);
-
-      const result = agent.analyze(input, context);
-      agentResults.push({ agent, result });
+    // Memory agent runs separately but concurrently
+    const memoryAgent = activatedAgents.find(a => a.key === 'memory');
+    let memoryPromise = Promise.resolve(null);
+    if (memoryAgent) {
+      memoryPromise = memoryAgent.analyze(input, context).then(result => ({ agent: memoryAgent, result }));
     }
+      
+    const rawResults = await Promise.all([...analysisPromises, memoryPromise]);
+    const agentResults = rawResults.filter(r => r !== null);
 
     // Step 4: Tradeoff analysis
     onStep('tradeoffs', 'Analyzing tradeoffs...');
     const tradeoffs = this.tradeoffEngine.analyze(agentResults);
-    await this.delay(400);
 
     // Step 5: Decision Agent resolves
     onStep('deciding', 'Making final decision...');
     const decisionAgent = this.agents.decision;
-    const finalDecision = decisionAgent.resolve(agentResults, input, context);
-    await this.delay(500);
+    const finalDecision = await decisionAgent.resolve(agentResults, input, context);
 
     // Store decision in memory
     this.memoryStore.addDecision(finalDecision.finalDecision);

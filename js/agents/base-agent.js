@@ -2,6 +2,8 @@
 // LIFE OS — Base Agent Class
 // ============================================
 
+import { LLMService } from '../engine/llm-service.js';
+
 export class BaseAgent {
   constructor({ name, emoji, key, role, color }) {
     this.name = name;
@@ -10,34 +12,82 @@ export class BaseAgent {
     this.role = role;
     this.color = color;
     this.active = false;
+
+    // Subclasses will define these based on the prompt templates
+    this.roleDescription = "";
+    this.customInstructions = "";
+    this.outputFormat = "";
+  }
+
+  generatePrompt(userInput, contextStr) {
+    return `You are the ${this.name} in a Life OS system.
+
+Your role:
+${this.roleDescription}
+
+User input:
+${userInput}
+
+Context (if any):
+${contextStr}
+
+Instructions:
+- Be clear and concise
+- Give structured output
+- Focus only on your role
+- Do not add unnecessary explanation
+${this.customInstructions}
+
+Output format:
+${this.outputFormat}`;
   }
 
   /**
-   * Analyze user input and return an opinion.
-   * Subclasses MUST override this method.
-   * @param {string} input - User's raw input text
-   * @param {object} context - Memory context from MemoryStore
-   * @returns {{ opinion: string, suggestedAction: string, reasoning: string, priority: 'high'|'medium'|'low' }}
+   * Abstracted analyze function that subclasses no longer need to override.
+   * Calls the Gemini API internally.
    */
-  analyze(input, context) {
-    throw new Error(`Agent ${this.name} must implement analyze()`);
+  async analyze(input, context) {
+    // Stringify context safely
+    let contextStr = 'None';
+    if (context && Object.keys(context).length > 0) {
+      contextStr = `Recent Decisions: ${context.history?.join(' | ') || ''} \nInteraction Count: ${context.interactionCount}`;
+    }
+
+    const prompt = this.generatePrompt(input, contextStr);
+
+    try {
+      const resultObj = await LLMService.generate(prompt);
+      
+      // Ensure priority exists
+      if (!resultObj.priority) {
+        resultObj.priority = 'medium';
+      }
+
+      // We package the raw JSON keys under "data", so renderer can dynamically loop them
+      return {
+        priority: resultObj.priority.toLowerCase(),
+        data: resultObj
+      };
+    } catch (e) {
+      console.error(`[${this.name}] LLM Error:`, e);
+      return {
+        priority: 'low',
+        data: {
+          error: "Agent offline or failed to generate.",
+          details: e.message
+        }
+      };
+    }
   }
 
   /**
-   * Check if this agent is relevant to the input.
-   * Uses keyword matching. Subclasses should override for better matching.
-   * @param {string} input 
-   * @param {string[]} keywords
-   * @returns {boolean}
+   * Uses keyword matching. Subclasses should override for better intelligence if needed.
    */
   isRelevant(input, keywords = []) {
     const lower = input.toLowerCase();
     return keywords.some(k => lower.includes(k));
   }
 
-  /**
-   * Get agent metadata for UI rendering.
-   */
   getMeta() {
     return {
       name: this.name,

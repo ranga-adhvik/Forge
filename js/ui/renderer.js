@@ -162,7 +162,6 @@ export class Renderer {
       card.id = `agent-card-${result.agent.key}`;
 
       const priorityClass = `agent-card__priority--${result.priority}`;
-
       card.innerHTML = `
         <div class="agent-card__header">
           <div class="agent-card__emoji">${result.agent.emoji}</div>
@@ -173,17 +172,7 @@ export class Renderer {
           <span class="agent-card__priority ${priorityClass}">${result.priority.toUpperCase()}</span>
         </div>
         <div class="agent-card__body">
-          <div class="agent-card__section">
-            <span class="agent-card__section-label">Opinion</span>
-            <p class="agent-card__section-text">${result.opinion}</p>
-          </div>
-          <div class="agent-card__action">
-            ${result.suggestedAction}
-          </div>
-          <div class="agent-card__section">
-            <span class="agent-card__section-label">Reasoning</span>
-            <p class="agent-card__section-text">${result.reasoning}</p>
-          </div>
+          ${this.generateDynamicAgentSections(result.data)}
         </div>
       `;
 
@@ -191,6 +180,49 @@ export class Renderer {
     });
 
     return grid;
+  }
+
+  generateDynamicAgentSections(data) {
+    if (!data) return '<p class="agent-card__section-text">No data.</p>';
+    
+    let html = '';
+    
+    for (const [key, value] of Object.entries(data)) {
+      if (key === 'priority' || key === 'error') continue;
+      
+      const label = key.replace(/_/g, ' ');
+      
+      // If it's an action or solution, make it pop
+      if (key === 'action' || key === 'solution' || key === 'advice' || key === 'recommended') {
+        html += `
+          <div class="agent-card__action">
+            <strong style="text-transform: uppercase; font-size: 0.7em; display:block; margin-bottom:4px; opacity:0.7;">${label}</strong>
+            ${typeof value === 'object' ? JSON.stringify(value) : value}
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="agent-card__section">
+            <span class="agent-card__section-label">${label}</span>
+            <div class="agent-card__section-text">
+              ${Array.isArray(value) ? '<ul>' + value.map(i => '<li>' + i + '</li>').join('') + '</ul>' : 
+                 (typeof value === 'object' ? JSON.stringify(value) : '<p>' + value + '</p>')}
+            </div>
+          </div>
+        `;
+      }
+    }
+    
+    if (data.error) {
+      html += `
+        <div class="agent-card__section">
+           <span class="agent-card__section-label" style="color:#ef4444">Error</span>
+           <p class="agent-card__section-text" style="color:#ef4444">${data.error}</p>
+        </div>
+      `;
+    }
+
+    return html;
   }
 
   createTradeoffCard(tradeoffs) {
