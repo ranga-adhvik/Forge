@@ -273,15 +273,35 @@ export class Renderer {
     div.className = 'decision-card glass active';
     div.id = 'decision-output';
 
+    let reasoningText = decision.reasoning;
+    try {
+      const parsed = JSON.parse(decision.reasoning);
+      if (typeof parsed === 'object' && parsed !== null) {
+        reasoningText = Object.values(parsed)
+          .flat()
+          .map(str => typeof str === 'string' ? str.replace(/^[+-]\s*/, '') : str)
+          .join('. ') + '.';
+        reasoningText = reasoningText.replace(/\.\./g, '.');
+      }
+    } catch(e) {}
+
+    let finalDec = decision.finalDecision || '';
+    if (typeof finalDec === 'string') {
+      finalDec = finalDec.replace(/\bOption [AB]\b/g, '').replace(/\b[AB]\b/g, '').replace(/[:\-]/g, '').trim();
+    }
+    if (!finalDec) {
+      finalDec = 'Recommended path selected based on analysis.';
+    }
+
     div.innerHTML = `
       <div class="decision-card__header">
         <span style="font-size: 1.5rem;">⚖️</span>
         <h3 class="gradient-text">Final Decision</h3>
       </div>
-      <p style="font-size: 15px; line-height: 1.7; color: var(--text-primary);">${decision.finalDecision}</p>
+      <p style="font-size: 15px; line-height: 1.7; color: var(--text-primary);">${finalDec}</p>
       <div style="margin-top: 16px; padding: 12px 16px; background: var(--bg-glass); border-radius: 8px;">
         <span class="agent-card__section-label">Reasoning</span>
-        <p style="margin-top: 6px; font-size: 13px; line-height: 1.6; color: var(--text-secondary);">${decision.reasoning}</p>
+        <p style="margin-top: 6px; font-size: 13px; line-height: 1.6; color: var(--text-secondary);">${reasoningText}</p>
       </div>
     `;
 
