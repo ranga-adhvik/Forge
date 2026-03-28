@@ -27,6 +27,7 @@ export class MemoryStore {
       interactionCount: 0,
       history: [],
       pastDecisions: [],
+      feedbackHistory: [],
       firstSeen: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
       preferences: {},
@@ -70,6 +71,15 @@ export class MemoryStore {
       this.data.pastDecisions = this.data.pastDecisions.slice(-30);
     }
 
+    this.save();
+  }
+
+  addFeedback(feedback) {
+    if (!this.data.feedbackHistory) this.data.feedbackHistory = [];
+    this.data.feedbackHistory.push(feedback);
+    if (this.data.feedbackHistory.length > 20) {
+      this.data.feedbackHistory = this.data.feedbackHistory.slice(-20);
+    }
     this.save();
   }
 

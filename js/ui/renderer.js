@@ -77,6 +77,10 @@ export class Renderer {
     this.outputContainer.appendChild(this.createSectionHeader('Autonomous Action'));
     this.outputContainer.appendChild(this.createActionCard(output.decision.autonomousAction));
 
+    // 7. Feedback Loop
+    this.outputContainer.appendChild(this.createSectionHeader('Feedback'));
+    this.outputContainer.appendChild(this.createFeedbackCard());
+
     // Animate entrance
     this.outputContainer.classList.add('anim-stagger');
 
@@ -188,7 +192,7 @@ export class Renderer {
     let html = '';
     
     for (const [key, value] of Object.entries(data)) {
-      if (key === 'priority' || key === 'error') continue;
+      if (key === 'priority' || key === 'error' || key.startsWith('_')) continue;
       
       const label = key.replace(/_/g, ' ');
       
@@ -319,6 +323,29 @@ export class Renderer {
       </div>
     `;
     div.style.padding = 'var(--space-lg)';
+    return div;
+  }
+
+  createFeedbackCard() {
+    const div = document.createElement('div');
+    div.className = 'glass';
+    div.id = 'feedback-output';
+    div.innerHTML = `
+      <div style="padding: var(--space-md);">
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">How was this response? Your feedback trains the system.</p>
+        <div style="display: flex; gap: 8px;" id="feedback-buttons">
+          <button id="btn-feedback-good" class="btn btn-ghost" style="padding: 6px 12px;">👍 Looks good</button>
+          <button id="btn-feedback-bad" class="btn btn-ghost" style="padding: 6px 12px;">👎 Needs improvement</button>
+        </div>
+        <div id="feedback-text-area" style="display: none; flex-direction: column; gap: 8px; margin-top: 12px;">
+          <input type="text" id="feedback-input" placeholder="What should I change next time? (Memory will learn this)" style="padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; font-size: 13px;">
+          <button id="btn-feedback-submit" class="btn btn-primary" style="align-self: flex-start; padding: 6px 16px;">Submit Feedback</button>
+        </div>
+        <div id="feedback-thanks" style="display: none; font-size: 13px; color: var(--accent-green); margin-top: 8px;">
+          ✓ Feedback saved. Memory updated.
+        </div>
+      </div>
+    `;
     return div;
   }
 }

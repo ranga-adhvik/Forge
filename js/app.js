@@ -130,6 +130,9 @@ class LifeOS {
       // Render output
       this.renderer.renderOutput(output);
 
+      // Bind Feedback Events dynamically for the new card
+      this.bindFeedbackEvents();
+
       // Update memory stats
       this.updateMemoryStats();
 
@@ -198,6 +201,43 @@ class LifeOS {
     if (decisionsEl) decisionsEl.textContent = stats.decisions;
     if (memorySizeEl) memorySizeEl.textContent = this.formatBytes(stats.memorySize);
     if (headerInteractions) headerInteractions.textContent = stats.interactions;
+  }
+
+  bindFeedbackEvents() {
+    const btnGood = document.getElementById('btn-feedback-good');
+    const btnBad = document.getElementById('btn-feedback-bad');
+    const btnSubmit = document.getElementById('btn-feedback-submit');
+    const feedbackTextArea = document.getElementById('feedback-text-area');
+    const feedbackInput = document.getElementById('feedback-input');
+    const feedbackButtons = document.getElementById('feedback-buttons');
+    const feedbackThanks = document.getElementById('feedback-thanks');
+
+    if (btnGood) {
+      btnGood.addEventListener('click', () => {
+        this.memoryStore.addFeedback("User liked the previous response and decision style.");
+        if (feedbackButtons) feedbackButtons.style.display = 'none';
+        if (feedbackThanks) feedbackThanks.style.display = 'block';
+      });
+    }
+
+    if (btnBad) {
+      btnBad.addEventListener('click', () => {
+        if (feedbackTextArea) feedbackTextArea.style.display = 'flex';
+        if (btnGood) btnGood.style.display = 'none';
+        if (btnBad) btnBad.style.display = 'none';
+      });
+    }
+
+    if (btnSubmit) {
+      btnSubmit.addEventListener('click', () => {
+        const text = feedbackInput ? feedbackInput.value.trim() : '';
+        if (text) {
+          this.memoryStore.addFeedback("USER FEEDBACK FOR IMPROVEMENT: " + text);
+          if (feedbackTextArea) feedbackTextArea.style.display = 'none';
+          if (feedbackThanks) feedbackThanks.style.display = 'block';
+        }
+      });
+    }
   }
 
   updateGreeting() {

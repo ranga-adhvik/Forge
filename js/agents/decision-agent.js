@@ -35,7 +35,8 @@ export class DecisionAgent extends BaseAgent {
       agentOpinion: r.result.data
     }));
 
-    const specialContext = `Past Decisions: ${context.history?.join(' | ') || 'None'}\n\nHere are the opinions from other agents:\n${JSON.stringify(summarizedResults, null, 2)}`;
+    const fbStr = context.feedbackHistory && context.feedbackHistory.length > 0 ? `\nUser Feedback constraints: ${context.feedbackHistory.join(' | ')}` : '';
+    const specialContext = `Past Decisions: ${context.history?.join(' | ') || 'None'}${fbStr}\n\nHere are the opinions from other agents:\n${JSON.stringify(summarizedResults, null, 2)}`;
 
     const prompt = this.generatePrompt(input, specialContext);
 
