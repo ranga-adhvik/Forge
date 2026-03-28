@@ -11,12 +11,12 @@ export class LLMService {
    */
   static async generate(prompt, retries = 3) {
     // Reroute fetch from hardcoded external featherless.ai directly to local Express backend.
-    const url = '/api/llm'; 
-    
+    const url = '/api/llm';
+
     try {
       const response = await fetch(url, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ prompt })
@@ -26,7 +26,7 @@ export class LLMService {
         const errData = await response.json().catch(() => ({}));
         const status = response.status;
         const msg = errData.error || response.statusText;
-        
+
         // Handle rate limiting & timeouts with Backoff Retry Mechanism
         if ((status === 429 || status >= 500) && retries > 0) {
           console.warn(`[LLMService] Rate Limit/Error (${status}). Retrying in 2 seconds... (${retries} attempts left)`);
@@ -38,14 +38,14 @@ export class LLMService {
       }
 
       const data = await response.json();
-      
+
       // Navigate OpenAI style responses gracefully
       if (!data.choices || data.choices.length === 0) {
         throw new Error("No responses received from LLM Model.");
       }
 
       const text = data.choices[0].message.content;
-      
+
       try {
         return JSON.parse(text);
       } catch (e) {
