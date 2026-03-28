@@ -60,24 +60,7 @@ class LifeOS {
     // Update memory stats
     this.updateMemoryStats();
 
-    // Setup API Key UI
-    const apiKeyInput = document.getElementById('api-key-input');
-    const saveApiKeyBtn = document.getElementById('save-api-key');
-    
-    if (apiKeyInput && saveApiKeyBtn) {
-      const currentKey = LLMService.getApiKey();
-      if (currentKey) apiKeyInput.value = currentKey;
-      
-      saveApiKeyBtn.addEventListener('click', () => {
-        const key = apiKeyInput.value.trim();
-        if (key) {
-          LLMService.setApiKey(key);
-          this.toast.show('API Key saved successfully', 'success');
-        } else {
-          this.toast.show('Please enter a valid API Key', 'error');
-        }
-      });
-    }
+    // API Key is now managed securely by the backend via .env
 
     // Bind events
     this.submitBtn.addEventListener('click', () => this.handleSubmit());
